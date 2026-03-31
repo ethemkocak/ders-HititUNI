@@ -1,0 +1,10 @@
+<Solution>
+  <Project Path="ilkProje/proje1.csproj" />
+  <Project Path="proje2/proje2.csproj" />
+  <Project Path="proje3/proje3.csproj" Id="a1ca016b-0712-46ef-a513-5516b78b2893" />
+  <Project Path="proje4/proje4.csproj" Id="95a7533d-5fae-4689-87cc-0e4464def5a1" />
+  <Project Path="proje5/proje5.csproj" Id="3a12675b-4582-4cf1-bebf-2c8e6c8b84ce" />
+  <Project Path="proje6/proje6.csproj" Id="065a3479-650f-4a74-a647-548902d9ef52" />
+  <Project Path="proje7/proje7.csproj" Id="aa52231c-63fd-4890-b0b5-1a896b8554d0" />
+  <Project Path="proje8/proje8.csproj" Id="0b2a6a64-71e2-4b14-9e6b-dfcf62313af5" />
+</Solution>
