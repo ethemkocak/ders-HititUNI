@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace proje18
 {
-    // TDK'dan dönen JSON yapısını karşılayacak sınıf
     public class IsimSonuc
     {
         public string ad { get; set; }
@@ -23,46 +21,57 @@ namespace proje18
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            Console.WriteLine("--- TDK Kişi Adları Sözlüğü ---");
-            Console.Write("Sorgulamak istediğiniz isim: ");
-            string isim = Console.ReadLine();
-
-            Console.Write("Cinsiyet seçin (1: Kız, 2: Erkek): ");
-            string cinsiyetKod = Console.ReadLine();
-
-            // URL Encoding işlemi: Özel karakterleri (ü, ş, ç vb.) web uyumlu hale getirir
-            string encodedIsim = Uri.EscapeDataString(isim);
-            string url = $"https://sozluk.gov.tr/adlar?ara={encodedIsim}&gore=1&cins={cinsiyetKod}";
-
-            try
+            // Sonsuz döngü başlatıyoruz
+            while (true)
             {
-                // TDK'ya istek atıyoruz
-                string responseBody = await client.GetStringAsync(url);
+                Console.WriteLine("--- TDK Kişi Adları Sözlüğü ---");
+                Console.Write("Sorgulamak istediğiniz isim (Çıkış için 'q' yazın): ");
+                string isim = Console.ReadLine();
 
-                // JSON verisini listeye dönüştürüyoruz
-                var sonuclar = JsonSerializer.Deserialize<List<IsimSonuc>>(responseBody);
-
-                if (sonuclar != null && sonuclar.Count > 0)
+                // Çıkış kontrolü
+                if (isim?.ToLower() == "q")
                 {
-                    Console.WriteLine("\n--- Sonuç ---");
-                    foreach (var sonuc in sonuclar)
+                    Console.WriteLine("Program kapatılıyor...");
+                    break;
+                }
+
+                Console.Write("Cinsiyet seçin (1: Kız, 2: Erkek): ");
+                string cinsiyetKod = Console.ReadLine();
+
+                string encodedIsim = Uri.EscapeDataString(isim);
+                string url = $"https://sozluk.gov.tr/adlar?ara={encodedIsim}&gore=1&cins={cinsiyetKod}";
+
+                try
+                {
+                    string responseBody = await client.GetStringAsync(url);
+                    var sonuclar = JsonSerializer.Deserialize<List<IsimSonuc>>(responseBody);
+
+                    if (sonuclar != null && sonuclar.Count > 0)
                     {
-                        Console.WriteLine($"İsim: {sonuc.ad}");
-                        Console.WriteLine($"Anlamı: {sonuc.anlam}");
+                        Console.WriteLine("\n--- Sonuç ---");
+                        foreach (var sonuc in sonuclar)
+                        {
+                            Console.WriteLine($"İsim: {sonuc.ad}");
+                            Console.WriteLine($"Anlamı: {sonuc.anlam}");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nAradığınız isim sözlükte bulunamadı.");
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    Console.WriteLine("\nAradığınız isim sözlükte bulunamadı.");
+                    Console.WriteLine($"\nBir hata oluştu: {ex.Message}");
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Bir hata oluştu: {ex.Message}");
-            }
 
-            Console.WriteLine("\nÇıkmak için bir tuşa basın...");
-            Console.ReadKey();
+                Console.WriteLine("\n-------------------------------------------");
+                Console.WriteLine("Yeni bir sorgu için bir tuşa basın...");
+                Console.ReadKey();
+
+                // Ekranı temizle ki görüntü kirliliği olmasın
+                Console.Clear();
+            }
         }
     }
 }
